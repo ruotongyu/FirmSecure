@@ -21,18 +21,39 @@ DFU mode can be started in the following cases:
 * Button 4 is pressed when starting the device.
 * The application on the DFU target supports entering DFU mode. In this case, the DFU controller can trigger the application to reset the device and enter DFU mode, which is referred to as buttonless update. 
 
+The following code in [nrf_bootloader.c](https://github.com/DiUS/nRF5-SDK-15.3.0-reduced/blob/master/components/libraries/bootloader/nrf_bootloader.c) controls whether enter DFU model or not. 
+```c
+// Check if an update needs to be activated and activate it.
+	activation_result = nrf_bootloader_fw_activate();
+	switch (activation_result)
+	{
+    	case ACTIVATION_NONE:
+        	initial_timeout = NRF_BOOTLOADER_MS_TO_TICKS(NRF_BL_DFU_INACTIVITY_TIMEOUT_MS);
+        	dfu_enter       = dfu_enter_check();
+        	break;
+
+    	case ACTIVATION_SUCCESS_EXPECT_ADDITIONAL_UPDATE:
+        	initial_timeout = NRF_BOOTLOADER_MS_TO_TICKS(NRF_BL_DFU_CONTINUATION_TIMEOUT_MS);
+        	dfu_enter       = true;
+        	break;
+
+        case ACTIVATION_SUCCESS:
+            bootloader_reset(true);
+            NRF_LOG_ERROR("Unreachable");
+            return NRF_ERROR_INTERNAL; // Should not reach this.
+
+        case ACTIVATION_ERROR:
+        default:
+            return NRF_ERROR_INTERNAL;
+    }
+```
 
 
-
-
-
+### DFU Validation (Secure DFU)
 Once entering DFU mode, the DFU controller will initiate the transfer of a firmware image, which is received and validated by the DFU target. If the image is valid, the device resets and the bootloader activates the image to replace the existing firmware. The following figure shows the required steps for a firmware update that is implemented in the DFU target:
 
 ![dft_flow](https://user-images.githubusercontent.com/25619082/152700128-073a5525-06ef-44fd-b001-ac5705e9c8c6.png)
 
-
-
-#### DFU Validation (Secure DFU)
 
 Before a Device Firmware Update (DFU) is completed, the new image should be validated. The validations are performed before the actual firmware is transferred (***prevalidation***) and after the transfer (***postvalidation***). The provided firmware package must include the firmware image and an init packet that can be used to prevalidate the image. To be compatible, the validation and the image creation must use the same init packet format. 
 
