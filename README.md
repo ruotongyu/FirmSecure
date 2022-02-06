@@ -24,7 +24,7 @@ The following figure displays the blocks in the DFU bootloader and their tasks w
 
 Once entering DFU mode, the DFU controller will initiate the transfer of a firmware image, which is received and validated by the DFU target. If the image is valid, the device resets and the bootloader activates the image to replace the existing firmware. The following figure shows the required steps for a firmware update that is implemented in the DFU target:
 
-![dft_flow](C:\Users\Tong\Desktop\dft_flow.png)
+![dft_flow](https://user-images.githubusercontent.com/25619082/152700128-073a5525-06ef-44fd-b001-ac5705e9c8c6.png)
 
 
 
@@ -205,13 +205,13 @@ Secure DFU is more secure in the way that only signed and verified firmware imag
 
 ##### Prevalidation
 
-![prevalidation](C:\Users\Tong\Desktop\prevalidation.png)
+![prevalidation](https://user-images.githubusercontent.com/25619082/152700146-f5a2b3cb-cda3-425f-93e0-1fca59c5c421.png)
 
 
 
 ##### Postvalidation
 
-![postvalidate](C:\Users\Tong\Desktop\postvalidate.png)
+![postvalidate](https://user-images.githubusercontent.com/25619082/152700135-53659dda-98b7-43d2-9cd6-79b0143cadc2.png)
 
 ![new_postvalidate](C:\Users\Tong\Desktop\new_postvalidate.png)
 
