@@ -84,7 +84,7 @@ Before a Device Firmware Update (DFU) is completed, the new image should be vali
 
 
 
-##### Validation
+#### Validation
 
 Validation of the image includes to verify that the image originates from a trusted source and that it is compatible with the device and current firmware and hardware. The version validation can be skipped if the falg `is_debug` is enabled.  
 
@@ -188,7 +188,7 @@ static nrf_dfu_result_t nrf_dfu_validation_signature_check(dfu_signature_type_t 
 ```
 
 
-##### Rules for versions
+#### Rules for versions
 
 `dfu_handle_prevalidate` is in charge of version validation.  
 
@@ -243,7 +243,7 @@ nrf_dfu_result_t nrf_dfu_validation_prevalidate(void)
 ```
 
 
-###### Legacy DFU vs Secure DFU
+#### Legacy DFU vs Secure DFU
 
 Secure DFU is more secure in the way that only signed and verified firmware images can be updated. If the bootloader cannot verify the image, it will not update it. However, with a legacy bootloader, all valid firmware images would be accepted and updated, exposing the device for unauthorized firmware updates. Nordic devices begin to replace Legacy DFU with Secure DFU from 2016 which is the time DFU with signing was introduced in SDK 12.0.0. 
 
