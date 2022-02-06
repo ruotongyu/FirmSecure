@@ -18,7 +18,7 @@ Bootloader will start either the application or the DFU mode, depending on diffe
 
 The following figure displays the blocks in the DFU bootloader and their tasks when performing an application update:
 
-![bootloader](C:\Users\Tong\Desktop\bootloader.jpg)
+![bootloader](https://user-images.githubusercontent.com/25619082/152700139-18ef0c56-b8f8-4cc9-a840-228e0277b9e3.jpg)
 
 
 
