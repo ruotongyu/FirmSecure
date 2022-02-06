@@ -10,7 +10,7 @@ Containing a bootloader with DFU capabilities, bootloader takes the responsibili
 
 
 ## Start Application from Bootloader
-Bootloader will start either the application or the DFU mode, depending on different triggers. By default, the DFU bootloader will start the application that is located at a **specific place in memory**. According to the code in [nrf_bootloader_app_start.c](https://github.com/DiUS/nRF5-SDK-15.3.0-reduced/blob/master/components/libraries/bootloader/nrf_bootloader_app_start.c), bootloader always boots from end of MRB (`uint32_t start_addr = MBR_SIZE`). The size of MBR is `0x1000` (Defined in [nrf_mrb.h](https://github.com/DiUS/nRF5-SDK-15.3.0-reduced/blob/master/components/softdevice/s140/headers/nrf52/nrf_mbr.h))
+Bootloader will start either the application or the DFU mode, depending on different triggers. By default, the DFU bootloader will start the application that is located at a **specific place in memory**. According to the function `nrf_bootloader_app_start` in [nrf_bootloader_app_start.c](https://github.com/DiUS/nRF5-SDK-15.3.0-reduced/blob/master/components/libraries/bootloader/nrf_bootloader_app_start.c), bootloader always boots from end of MRB (`uint32_t start_addr = MBR_SIZE`). The size of MBR is `0x1000` (Defined in [nrf_mrb.h](https://github.com/DiUS/nRF5-SDK-15.3.0-reduced/blob/master/components/softdevice/s140/headers/nrf52/nrf_mbr.h))
 ```c
 void nrf_bootloader_app_start(void)
 {
@@ -46,7 +46,7 @@ DFU mode can be started in the following cases:
 * Button 4 is pressed when starting the device.
 * The application on the DFU target supports entering DFU mode. In this case, the DFU controller can trigger the application to reset the device and enter DFU mode, which is referred to as buttonless update. 
 
-The following code in [nrf_bootloader.c](https://github.com/DiUS/nRF5-SDK-15.3.0-reduced/blob/master/components/libraries/bootloader/nrf_bootloader.c) controls whether enter DFU model or not. 
+The following the function `nrf_bootloader_init` in [nrf_bootloader.c](https://github.com/DiUS/nRF5-SDK-15.3.0-reduced/blob/master/components/libraries/bootloader/nrf_bootloader.c) controls whether enter DFU model or not. 
 ```c
 // Check if an update needs to be activated and activate it.
 	activation_result = nrf_bootloader_fw_activate();
