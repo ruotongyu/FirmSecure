@@ -150,6 +150,10 @@ ret_code_t nrf_bootloader_init(nrf_dfu_observer_t observer)
 }
 ```
 
+## Legacy DFU vs Secure DFU
+
+Secure DFU is more secure in the way that only signed and verified firmware images can be updated. If the bootloader cannot verify the image, it will not update it. However, with a legacy bootloader, all valid firmware images would be accepted and updated, exposing the device for unauthorized firmware updates. Nordic devices begin to replace Legacy DFU with Secure DFU from 2016 which is the time DFU with signing was introduced in SDK 12.0.0. 
+
 
 ## DFU Validation (Secure DFU)
 Once entering DFU mode, the DFU controller will initiate the transfer of a firmware image, which is received and validated by the DFU target. If the image is valid, the device resets and the bootloader activates the image to replace the existing firmware. The following figure shows the required steps for a firmware update that is implemented in the DFU target:
@@ -318,11 +322,6 @@ nrf_dfu_result_t nrf_dfu_validation_prevalidate(void)
     return ret_val;
 }
 ```
-
-
-## Legacy DFU vs Secure DFU
-
-Secure DFU is more secure in the way that only signed and verified firmware images can be updated. If the bootloader cannot verify the image, it will not update it. However, with a legacy bootloader, all valid firmware images would be accepted and updated, exposing the device for unauthorized firmware updates. Nordic devices begin to replace Legacy DFU with Secure DFU from 2016 which is the time DFU with signing was introduced in SDK 12.0.0. 
 
  
 
