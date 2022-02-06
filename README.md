@@ -8,7 +8,11 @@ Containing a bootloader with DFU capabilities, bootloader takes the responsibili
 ![bootloader](https://user-images.githubusercontent.com/25619082/152700139-18ef0c56-b8f8-4cc9-a840-228e0277b9e3.jpg)
 
 
-#### Architecture
+
+## Start Application from Bootloader
+Bootloader will start either the application or the DFU mode, depending on different triggers. By default, the DFU bootloader will start the application that is located at a **specific place in memory**. According to the code in [nrf_bootloader_app_start.c](https://github.com/DiUS/nRF5-SDK-15.3.0-reduced/blob/master/components/libraries/bootloader/nrf_bootloader_app_start.c), bootloader always boots from end of MRB (`uint32_t start_addr = MBR_SIZE`).
+
+
 
 Bootloader will start either the application or the DFU mode, depending on different triggers. By default, the DFU bootloader will start the application on the device. DFU mode can be started in the following cases:
 
