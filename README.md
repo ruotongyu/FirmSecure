@@ -84,7 +84,7 @@ Before a Device Firmware Update (DFU) is completed, the new image should be vali
 
 
 
-#### Validation
+### Validation
 
 Validation of the image includes to verify that the image originates from a trusted source and that it is compatible with the device and current firmware and hardware. The version validation can be skipped if the falg `is_debug` is enabled.  
 
@@ -188,7 +188,7 @@ static nrf_dfu_result_t nrf_dfu_validation_signature_check(dfu_signature_type_t 
 ```
 
 
-#### Rules for versions
+### Rules for versions
 
 `dfu_handle_prevalidate` is in charge of version validation.  
 
@@ -243,7 +243,7 @@ nrf_dfu_result_t nrf_dfu_validation_prevalidate(void)
 ```
 
 
-#### Legacy DFU vs Secure DFU
+## Legacy DFU vs Secure DFU
 
 Secure DFU is more secure in the way that only signed and verified firmware images can be updated. If the bootloader cannot verify the image, it will not update it. However, with a legacy bootloader, all valid firmware images would be accepted and updated, exposing the device for unauthorized firmware updates. Nordic devices begin to replace Legacy DFU with Secure DFU from 2016 which is the time DFU with signing was introduced in SDK 12.0.0. 
 
@@ -251,15 +251,15 @@ Secure DFU is more secure in the way that only signed and verified firmware imag
 
 
 
-#### Details in Source Code
+## More Validation Details in Source Code
 
-##### Prevalidation
+#### Prevalidation
 
 ![prevalidation](https://user-images.githubusercontent.com/25619082/152700146-f5a2b3cb-cda3-425f-93e0-1fca59c5c421.png)
 
 
 
-##### Postvalidation
+#### Postvalidation
 
 ![postvalidate](https://user-images.githubusercontent.com/25619082/152700135-53659dda-98b7-43d2-9cd6-79b0143cadc2.png)
 
@@ -653,7 +653,6 @@ static bool postvalidate_app(dfu_init_command_t const * p_init, uint32_t src_add
 ```
 
 
-
 ###### postvalidate_sd_bl
 
 Source code available on [nrf_dfu_validation.c](https://github.com/DiUS/nRF5-SDK-15.3.0-reduced/blob/master/components/libraries/bootloader/dfu/nrf_dfu_validation.c)
@@ -864,10 +863,9 @@ bool nrf_dfu_validation_boot_validate(boot_validation_t const * p_validation, ui
 
 
 
+## Running Examples (To do)
 
-#### Running Examples (To do)
-
-###### Running Examples that use a SoftDevice
+#### Running Examples that use a SoftDevice
 
 Programming the SoftDevice on the board is the very first step before moving to more advanced examples that use Bluetooth. Nordic suggests three methods to program the SoftDevice as follow:
 
@@ -877,13 +875,13 @@ Programming the SoftDevice on the board is the very first step before moving to 
 
 
 
-###### Creating a DFU bootloader
+#### Creating a DFU bootloader
 
 This link explains how to [create a DFU bootloader](https://infocenter.nordicsemi.com/index.jsp?topic=%2Fcom.nordic.infocenter.sdk51.v10.0.0%2Fbledfu_bootloader_introduction.html)
 
 
 
-###### Running the BLE bootloader Example
+#### Running the BLE bootloader Example
 
 This link provides the details on [running BLE bootloader Example](https://infocenter.nordicsemi.com/index.jsp?topic=%2Fcom.nordic.infocenter.sdk51.v10.0.0%2Fbledfu_example_running.html)
 
