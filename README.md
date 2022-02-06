@@ -48,19 +48,50 @@ DFU mode can be started in the following cases:
 
 The following the function `nrf_bootloader_init` in [nrf_bootloader.c](https://github.com/DiUS/nRF5-SDK-15.3.0-reduced/blob/master/components/libraries/bootloader/nrf_bootloader.c) controls whether enter DFU model or not. 
 ```c
-// Check if an update needs to be activated and activate it.
-	activation_result = nrf_bootloader_fw_activate();
-	switch (activation_result)
-	{
-    	case ACTIVATION_NONE:
-        	initial_timeout = NRF_BOOTLOADER_MS_TO_TICKS(NRF_BL_DFU_INACTIVITY_TIMEOUT_MS);
-        	dfu_enter       = dfu_enter_check();
-        	break;
+ret_code_t nrf_bootloader_init(nrf_dfu_observer_t observer)
+{
+    NRF_LOG_DEBUG("In nrf_bootloader_init");
+    
+	ret_code_t                            ret_val;
+	nrf_bootloader_fw_activation_result_t activation_result;
+	uint32_t                              initial_timeout;
+	bool                                  dfu_enter = false;
 
-    	case ACTIVATION_SUCCESS_EXPECT_ADDITIONAL_UPDATE:
-        	initial_timeout = NRF_BOOTLOADER_MS_TO_TICKS(NRF_BL_DFU_CONTINUATION_TIMEOUT_MS);
-        	dfu_enter       = true;
-        	break;
+	m_user_observer = observer;
+
+	if (NRF_BL_DFU_ENTER_METHOD_BUTTON)
+	{
+    	dfu_enter_button_init();
+	}
+
+	ret_val = nrf_dfu_settings_init(false);
+	if (ret_val != NRF_SUCCESS)
+	{
+    	return NRF_ERROR_INTERNAL;
+	}
+
+	#if NRF_BL_DFU_ALLOW_UPDATE_FROM_APP
+	// Postvalidate if DFU has signaled that update is ready.
+	if (s_dfu_settings.bank_current == NRF_DFU_CURRENT_BANK_1)
+	{
+    	postvalidate();
+	}
+	#endif
+
+    // Check if an update needs to be activated and activate it.
+    activation_result = nrf_bootloader_fw_activate();
+
+    switch (activation_result)
+    {
+        case ACTIVATION_NONE:
+            initial_timeout = NRF_BOOTLOADER_MS_TO_TICKS(NRF_BL_DFU_INACTIVITY_TIMEOUT_MS);
+            dfu_enter       = dfu_enter_check();
+            break;
+
+        case ACTIVATION_SUCCESS_EXPECT_ADDITIONAL_UPDATE:
+            initial_timeout = NRF_BOOTLOADER_MS_TO_TICKS(NRF_BL_DFU_CONTINUATION_TIMEOUT_MS);
+            dfu_enter       = true;
+            break;
 
         case ACTIVATION_SUCCESS:
             bootloader_reset(true);
@@ -71,6 +102,52 @@ The following the function `nrf_bootloader_init` in [nrf_bootloader.c](https://g
         default:
             return NRF_ERROR_INTERNAL;
     }
+
+    if (dfu_enter)
+    {
+        nrf_bootloader_wdt_init();
+        scheduler_init();
+        dfu_enter_flags_clear();
+
+        // Call user-defined init function if implemented
+        ret_val = nrf_dfu_init_user();
+        if (ret_val != NRF_SUCCESS)
+        {
+            return NRF_ERROR_INTERNAL;
+        }
+
+        nrf_bootloader_dfu_inactivity_timer_restart(initial_timeout, inactivity_timeout);
+
+        ret_val = nrf_dfu_init(dfu_observer);
+        if (ret_val != NRF_SUCCESS)
+        {
+            return NRF_ERROR_INTERNAL;
+        }
+
+        NRF_LOG_DEBUG("Enter main loop");
+        loop_forever(); // This function will never return.
+        NRF_LOG_ERROR("Unreachable");
+    }
+    else
+    {
+        // Erase additional data like peer data or advertisement name
+        ret_val = nrf_dfu_settings_additional_erase();
+        if (ret_val != NRF_SUCCESS)
+        {
+            return NRF_ERROR_INTERNAL;
+        }
+
+        m_flash_write_done = false;
+        nrf_dfu_settings_backup(flash_write_callback);
+        ASSERT(m_flash_write_done);
+
+        nrf_bootloader_app_start();
+        NRF_LOG_ERROR("Unreachable");
+    }
+
+    // Should not be reached.
+    return NRF_ERROR_INTERNAL;
+}
 ```
 
 
@@ -269,108 +346,7 @@ Secure DFU is more secure in the way that only signed and verified firmware imag
 
 Source Code available on [bootloader.c](https://github.com/DiUS/nRF5-SDK-15.3.0-reduced/blob/master/components/libraries/bootloader/nrf_bootloader.c)
 
-```c
-ret_code_t nrf_bootloader_init(nrf_dfu_observer_t observer)
-{
-    NRF_LOG_DEBUG("In nrf_bootloader_init");
-    
-	ret_code_t                            ret_val;
-	nrf_bootloader_fw_activation_result_t activation_result;
-	uint32_t                              initial_timeout;
-	bool                                  dfu_enter = false;
 
-	m_user_observer = observer;
-
-	if (NRF_BL_DFU_ENTER_METHOD_BUTTON)
-	{
-    	dfu_enter_button_init();
-	}
-
-	ret_val = nrf_dfu_settings_init(false);
-	if (ret_val != NRF_SUCCESS)
-	{
-    	return NRF_ERROR_INTERNAL;
-	}
-
-	#if NRF_BL_DFU_ALLOW_UPDATE_FROM_APP
-	// Postvalidate if DFU has signaled that update is ready.
-	if (s_dfu_settings.bank_current == NRF_DFU_CURRENT_BANK_1)
-	{
-    	postvalidate();
-	}
-	#endif
-
-    // Check if an update needs to be activated and activate it.
-    activation_result = nrf_bootloader_fw_activate();
-
-    switch (activation_result)
-    {
-        case ACTIVATION_NONE:
-            initial_timeout = NRF_BOOTLOADER_MS_TO_TICKS(NRF_BL_DFU_INACTIVITY_TIMEOUT_MS);
-            dfu_enter       = dfu_enter_check();
-            break;
-
-        case ACTIVATION_SUCCESS_EXPECT_ADDITIONAL_UPDATE:
-            initial_timeout = NRF_BOOTLOADER_MS_TO_TICKS(NRF_BL_DFU_CONTINUATION_TIMEOUT_MS);
-            dfu_enter       = true;
-            break;
-
-        case ACTIVATION_SUCCESS:
-            bootloader_reset(true);
-            NRF_LOG_ERROR("Unreachable");
-            return NRF_ERROR_INTERNAL; // Should not reach this.
-
-        case ACTIVATION_ERROR:
-        default:
-            return NRF_ERROR_INTERNAL;
-    }
-
-    if (dfu_enter)
-    {
-        nrf_bootloader_wdt_init();
-        scheduler_init();
-        dfu_enter_flags_clear();
-
-        // Call user-defined init function if implemented
-        ret_val = nrf_dfu_init_user();
-        if (ret_val != NRF_SUCCESS)
-        {
-            return NRF_ERROR_INTERNAL;
-        }
-
-        nrf_bootloader_dfu_inactivity_timer_restart(initial_timeout, inactivity_timeout);
-
-        ret_val = nrf_dfu_init(dfu_observer);
-        if (ret_val != NRF_SUCCESS)
-        {
-            return NRF_ERROR_INTERNAL;
-        }
-
-        NRF_LOG_DEBUG("Enter main loop");
-        loop_forever(); // This function will never return.
-        NRF_LOG_ERROR("Unreachable");
-    }
-    else
-    {
-        // Erase additional data like peer data or advertisement name
-        ret_val = nrf_dfu_settings_additional_erase();
-        if (ret_val != NRF_SUCCESS)
-        {
-            return NRF_ERROR_INTERNAL;
-        }
-
-        m_flash_write_done = false;
-        nrf_dfu_settings_backup(flash_write_callback);
-        ASSERT(m_flash_write_done);
-
-        nrf_bootloader_app_start();
-        NRF_LOG_ERROR("Unreachable");
-    }
-
-    // Should not be reached.
-    return NRF_ERROR_INTERNAL;
-}
-```
 
 
 
