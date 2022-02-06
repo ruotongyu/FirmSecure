@@ -342,12 +342,6 @@ Secure DFU is more secure in the way that only signed and verified firmware imag
 
 ![new_postvalidate](https://user-images.githubusercontent.com/25619082/152700297-c0bbf380-cac8-46b5-9286-24b6a4bee977.png)
 
-###### nrf_bootloader_init
-
-Source Code available on [bootloader.c](https://github.com/DiUS/nRF5-SDK-15.3.0-reduced/blob/master/components/libraries/bootloader/nrf_bootloader.c)
-
-
-
 
 
 ###### nrf_dfu_init
