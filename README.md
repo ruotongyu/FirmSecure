@@ -10,17 +10,16 @@ Containing a bootloader with DFU capabilities, bootloader takes the responsibili
 
 
 ## Start Application from Bootloader
-Bootloader will start either the application or the DFU mode, depending on different triggers. By default, the DFU bootloader will start the application that is located at a **specific place in memory**. According to the code in [nrf_bootloader_app_start.c](https://github.com/DiUS/nRF5-SDK-15.3.0-reduced/blob/master/components/libraries/bootloader/nrf_bootloader_app_start.c), bootloader always boots from end of MRB (`uint32_t start_addr = MBR_SIZE`).
+Bootloader will start either the application or the DFU mode, depending on different triggers. By default, the DFU bootloader will start the application that is located at a **specific place in memory**. According to the code in [nrf_bootloader_app_start.c](https://github.com/DiUS/nRF5-SDK-15.3.0-reduced/blob/master/components/libraries/bootloader/nrf_bootloader_app_start.c), bootloader always boots from end of MRB (`uint32_t start_addr = MBR_SIZE`). The size of MBR is `0x1000` (Defined in [nrf_mrb.h](https://github.com/DiUS/nRF5-SDK-15.3.0-reduced/blob/master/components/softdevice/s140/headers/nrf52/nrf_mbr.h))
 
 
-
-Bootloader will start either the application or the DFU mode, depending on different triggers. By default, the DFU bootloader will start the application on the device. DFU mode can be started in the following cases:
+## Enter DFU Mode from Bootloader
+DFU mode can be started in the following cases:
 
 * No application is installed on the device.
 * Button 4 is pressed when starting the device.
 * The application on the DFU target supports entering DFU mode. In this case, the DFU controller can trigger the application to reset the device and enter DFU mode, which is referred to as buttonless update. 
 
-The following figure displays the blocks in the DFU bootloader and their tasks when performing an application update:
 
 
 
