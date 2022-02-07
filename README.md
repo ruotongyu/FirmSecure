@@ -364,23 +364,6 @@ uint32_t nrf_dfu_init(nrf_dfu_observer_t observer)
 ```
 
 
-
-
-
-
-
-#### Postvalidation
-
-![postvalidate](https://user-images.githubusercontent.com/25619082/152700135-53659dda-98b7-43d2-9cd6-79b0143cadc2.png)
-
-![new_postvalidate](https://user-images.githubusercontent.com/25619082/152700297-c0bbf380-cac8-46b5-9286-24b6a4bee977.png)
-
-
-
-
-
-
-
 ###### nrf_duf_req_handler_init
 
 Source code available on [nrf_duf_req_handle.c](https://github.com/DiUS/nRF5-SDK-15.3.0-reduced/blob/master/components/libraries/bootloader/dfu/nrf_dfu_req_handler.c)
@@ -425,8 +408,6 @@ ret_code_t nrf_dfu_req_handler_init(nrf_dfu_observer_t observer)
 	return NRF_SUCCESS;
 }
 ```
-
-
 
 ###### nrf_dfu_validation_init_cmd_execute
 
@@ -488,6 +469,14 @@ nrf_dfu_result_t nrf_dfu_validation_init_cmd_execute(uint32_t * p_dst_data_addr,
     return ret_val;
 }
 ```
+
+
+
+#### Postvalidation
+
+![postvalidate](https://user-images.githubusercontent.com/25619082/152700135-53659dda-98b7-43d2-9cd6-79b0143cadc2.png)
+
+![new_postvalidate](https://user-images.githubusercontent.com/25619082/152700297-c0bbf380-cac8-46b5-9286-24b6a4bee977.png)
 
 
 
