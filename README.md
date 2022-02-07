@@ -165,7 +165,6 @@ Once entering DFU mode, the DFU controller will initiate the transfer of a firmw
 Before a Device Firmware Update (DFU) is completed, the new image should be validated. The validations are performed before the actual firmware is transferred (***prevalidation***) and after the transfer (***postvalidation***). The provided firmware package must include the firmware image and an init packet that can be used to prevalidate the image. To be compatible, the validation and the image creation must use the same init packet format. 
 
 
-
 ### Validation
 
 Validation of the image includes to verify that the image originates from a trusted source and that it is compatible with the device and current firmware and hardware. The version validation can be skipped if the falg `is_debug` is enabled.  
@@ -325,8 +324,6 @@ nrf_dfu_result_t nrf_dfu_validation_prevalidate(void)
 ```
 
  
-
-
 
 ## More Validation Details in Source Code
 
@@ -718,7 +715,6 @@ static bool postvalidate_sd_bl(dfu_init_command_t const  * p_init,
 ```
 
 
-
 ###### boot_validation_extract
 
 Source code available on [nrf_dfu_validation.c](https://github.com/DiUS/nRF5-SDK-15.3.0-reduced/blob/master/components/libraries/bootloader/dfu/nrf_dfu_validation.c)
@@ -825,7 +821,6 @@ bool nrf_dfu_validation_boot_validate(boot_validation_t const * p_validation, ui
     }
 }
 ```
-
 
 
 ## Running Examples (To do)
